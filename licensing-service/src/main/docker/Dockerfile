@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk-alpine
+VOLUME /tmp
 RUN  apk update && apk upgrade && apk add netcat-openbsd
 RUN mkdir -p /usr/local/licensingservice
 ADD  @project.build.finalName@.jar /usr/local/licensingservice/

@@ -4,11 +4,11 @@
 
   <groupId>com.thoughtmechanix</groupId>
   <version>0.0.1-SNAPSHOT</version>
-  <artifactId>tmx-parent-pom</artifactId>
+  <artifactId>swf-parent-pom</artifactId>
   <packaging>pom</packaging>
 
 
-  <name>thoughtmechanix-parent-pom</name>
+  <name>swfraser-parent-pom</name>
   <description>Parent Pom for the thoughtmechanix project</description>
 
   <parent>
