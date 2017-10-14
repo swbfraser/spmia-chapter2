@@ -2,23 +2,40 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.thoughtmechanix</groupId>
-    <artifactId>licensing-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+
+
+    <!-- recall parent pom merge the following elements
+        dependancies
+        developers and contributors
+        plugin lists (including reports)
+        plugin executions with matching ids   - this we will use to set default dockerfile-maven-plugin executions in parent
+        plugin configuration   - again this will be used for dockerfile-maven-plugin settings
+        resources
+    -->
+
+    <parent>
+        <groupId>com.thoughtmechanix</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>licensing-application</artifactId>
+        <!--  <relativePath>../pom.xml</relativePath>  optional to specify the parent pom location, but default is one directory higher, so ../pom.xml is the defalut-->
+    </parent>
+
+    <!-- final name is <groupId>:<artifactId>:<version> -->
+    <!--<groupId>com.thoughtmechanix</groupId>  while same as parent, just inherit.-->
+    <artifactId>licensing-service</artifactId>  <!-- but here we what this to have its own artifact id so it has its own name -->
+    <!--<version>0.0.1-SNAPSHOT</version>    while same as parent, just inherit.-->
+    <packaging>jar</packaging>      <!-- parent specifies pom, but we want jar so must override parent settings. -->
+
+
 
     <name>Eagle Eye Licensing Service</name>
     <description>Licensing Service</description>
 
-    <parent>
-         <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-parent</artifactId>
-          <version>1.5.7.RELEASE</version>
-          <relativePath/>
-           <!-- lookup parent from repository -->
-    </parent>
-
-
+    <!--Docker build Config-->
+    <properties>
+        <start-class>com.thoughtmechanix.licenses.Application</start-class>
+        <docker.image.name>${docker.image.prefix}/tmx-licensing-service</docker.image.name>
+    </properties>
 
 
     <dependencies>
@@ -34,23 +51,15 @@
         </dependency>
     </dependencies>
 
-    <!--Docker build Config-->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <start-class>com.thoughtmechanix.licenses.Application</start-class>
 
-        <docker.image.tag>chapter2</docker.image.tag>
-        <docker.image.prefix>${env.USER}</docker.image.prefix>
-        <docker.image.name>${docker.image.prefix}/tmx-licensing-service</docker.image.name>
-    </properties>
 
     <build>
        <plugins>
            <!-- We use the Resources plugin to filer Dockerfile and run.sh, it inserts actual JAR filename -->
-           <!-- The final Dockerfile will be created in target/dockerfile/Dockerfile -->
+           <!-- The final Dockerfile will be created in target/ -->
            <plugin>
                <artifactId>maven-resources-plugin</artifactId>
+               <version>3.0.2</version>
                <executions>
                    <execution>
                        <id>copy-resources</id>
@@ -78,27 +87,10 @@
                <artifactId>dockerfile-maven-plugin</artifactId>
                <version>1.3.6</version>
                <configuration>
-                   <repository>${docker.image.prefix}/${project.artifactId}</repository>
                    <contextDirectory>${project.basedir}/target</contextDirectory>
-
                </configuration>
            </plugin>
-           <!--<plugin>-->
-               <!--<groupId>com.spotify</groupId>-->
-               <!--<artifactId>docker-maven-plugin</artifactId>-->
-               <!--<version>0.4.10</version>-->
-               <!--<configuration>-->
-                   <!--<imageName>${docker.image.name}:${docker.image.tag}</imageName>-->
-                   <!--<dockerDirectory>${basedir}/target/dockerfile</dockerDirectory>-->
-                   <!--<resources>-->
-                       <!--<resource>-->
-                           <!--<targetPath>/</targetPath>-->
-                           <!--<directory>${project.build.directory}</directory>-->
-                           <!--<include>${project.build.finalName}.jar</include>-->
-                       <!--</resource>-->
-                   <!--</resources>-->
-               <!--</configuration>-->
-           <!--</plugin>-->
+
            <plugin>
                <groupId>org.springframework.boot</groupId>
                <artifactId>spring-boot-maven-plugin</artifactId>
